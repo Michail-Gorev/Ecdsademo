@@ -54,9 +54,9 @@ fun SignScreen(
         OutlinedTextField(
             value = uiState.privateKey,
             onValueChange = { viewModel.onPrivateKeyChanged(it) },
-            label = { Text("Private Key (Dec)") },
+            label = { Text("Приватный ключ (десятичный формат)") },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Введите приватный ключ (dec)") }
+            placeholder = { Text("Введите приватный ключ (десятичный формат)") }
         )
 
         Button(

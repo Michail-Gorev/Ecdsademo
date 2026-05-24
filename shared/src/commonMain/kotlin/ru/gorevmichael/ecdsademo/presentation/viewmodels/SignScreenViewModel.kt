@@ -48,7 +48,7 @@ class SignScreenViewModel(
         _viewModelScope.launch {
             val state = _uiState.value
             if (state.message.isBlank() || state.privateKey.isBlank()) {
-                _uiState.update { it.copy(error = "Message and Private Key cannot be empty") }
+                _uiState.update { it.copy(error = "Все поля должны быть заполнены!") }
                 return@launch
             }
 
@@ -71,7 +71,7 @@ class SignScreenViewModel(
                 _uiState.update { it.copy(signatureJson = json, error = null) }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _uiState.update { it.copy(error = "Error: ${e.message ?: "Invalid Private Key"}") }
+                _uiState.update { it.copy(error = "Error: ${e.message ?: "Некорректный приватный ключ!"}") }
             }
         }
     }
@@ -79,7 +79,7 @@ class SignScreenViewModel(
     private fun generatePublicKey() {
         _viewModelScope.launch {
             val privateKey = _uiState.value.privateKey
-            require(privateKey.isNotBlank()) { "Private Key cannot be empty" }
+            require(privateKey.isNotBlank()) { "Приватный ключ не может быть пустым!" }
             val pubKey =
                 generatePublicKeyUseCase(privateKey.toKBigInteger(), signConfig.generationPoint)
             val json = """

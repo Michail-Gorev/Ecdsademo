@@ -1,29 +1,53 @@
 package ru.gorevmichael.ecdsademo
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
-
-import ecdsademo.shared.generated.resources.Res
-import ecdsademo.shared.generated.resources.compose_multiplatform
 import ru.gorevmichael.ecdsademo.presentation.ui.SignScreen
+import ru.gorevmichael.ecdsademo.presentation.ui.VerifyScreen
+
+enum class Screen {
+    Sign, Verify
+}
 
 @Composable
 @Preview
 fun App() {
+    //FIXME переделать с использованием derivedState(?)
+    var currentScreen by remember { mutableStateOf(Screen.Sign) }
+
     MaterialTheme {
-        SignScreen()
+        Scaffold(
+            bottomBar = {
+                NavigationBar {
+                    NavigationBarItem(
+                        selected = currentScreen == Screen.Sign,
+                        onClick = { currentScreen = Screen.Sign },
+                        label = { Text("Генерация подписи") },
+                        icon = { 
+                            Text(text = "\uD83E\uDDEC", style = MaterialTheme.typography.titleLarge)
+                        }
+                    )
+                    NavigationBarItem(
+                        selected = currentScreen == Screen.Verify,
+                        onClick = { currentScreen = Screen.Verify },
+                        label = { Text("Проверка подписи") },
+                        icon = { 
+                            Text(text = "✔\uFE0F", style = MaterialTheme.typography.titleLarge)
+                        }
+                    )
+                }
+            }
+        ) { innerPadding ->
+            Box(modifier = Modifier.padding(innerPadding)) {
+                when (currentScreen) {
+                    Screen.Sign -> SignScreen()
+                    Screen.Verify -> VerifyScreen()
+                }
+            }
+        }
     }
 }

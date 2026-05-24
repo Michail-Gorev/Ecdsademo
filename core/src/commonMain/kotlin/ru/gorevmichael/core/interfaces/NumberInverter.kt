@@ -6,6 +6,7 @@ import io.github.gatrongdev.kbignum.math.KBigInteger
  * Интерфейс для объектов, отвечающих за нахождение обратного числа
  * (обратное по модулю и т.д.)
  */
+//TODO подумать, как обобщить, не привязываясь к Int и тем более к KBigInteger
 interface NumberInverter {
 
     /**
