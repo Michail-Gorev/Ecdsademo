@@ -6,9 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +26,7 @@ fun SignScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val clipboardManager = LocalClipboardManager.current
+    var expanded by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -38,25 +37,58 @@ fun SignScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "ECDSA Signing",
+            text = "Генерация подписи",
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary
         )
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            OutlinedTextField(
+                value = uiState.selectedConfig.first,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Конфигурация (Curve)") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                modifier = Modifier.menuAnchor(),
+                shape = RoundedCornerShape(12.dp)
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                uiState.configs.forEach { config ->
+                    DropdownMenuItem(
+                        text = { Text(config.first) },
+                        onClick = {
+                            viewModel.onConfigSelected(config)
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
 
         OutlinedTextField(
             value = uiState.message,
             onValueChange = { viewModel.onMessageChanged(it) },
             label = { Text("Сообщение для подписи") },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Введите сообщение") }
+            placeholder = { Text("Введите сообщение") },
+            shape = RoundedCornerShape(12.dp)
         )
 
         OutlinedTextField(
             value = uiState.privateKey,
             onValueChange = { viewModel.onPrivateKeyChanged(it) },
-            label = { Text("Приватный ключ (десятичный формат)") },
+            label = { Text("Приватный ключ") },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Введите приватный ключ (десятичный формат)") }
+            placeholder = { Text("Введите приватный ключ (десятичный формат)") },
+            shape = RoundedCornerShape(12.dp)
         )
 
         Button(
@@ -76,86 +108,46 @@ fun SignScreen(
         }
 
         uiState.signatureJson?.let { json ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Подпись (JSON)",
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                        TextButton(onClick = {
-                            clipboardManager.setText(AnnotatedString(json))
-                        }) {
-                            Text("Скопировать")
-                        }
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color.Black.copy(alpha = 0.05f))
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = json,
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 12.sp,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                }
-            }
+            ResultCard(title = "Подпись (JSON)", content = json, clipboardManager = clipboardManager)
         }
 
         uiState.publicKey?.let { json ->
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Публичный ключ (JSON)",
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                        TextButton(onClick = {
-                            clipboardManager.setText(AnnotatedString(json))
-                        }) {
-                            Text("Скопировать")
-                        }
-                    }
+            ResultCard(title = "Публичный ключ (JSON)", content = json, clipboardManager = clipboardManager)
+        }
+    }
+}
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color.Black.copy(alpha = 0.05f))
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = json,
-                            fontFamily = FontFamily.Monospace,
-                            fontSize = 12.sp,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
+@Composable
+private fun ResultCard(title: String, content: String, clipboardManager: androidx.compose.ui.platform.ClipboardManager) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = title, style = MaterialTheme.typography.labelLarge)
+                TextButton(onClick = { clipboardManager.setText(AnnotatedString(content)) }) {
+                    Text("Скопировать")
                 }
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.Black.copy(alpha = 0.05f))
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = content,
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = 12.sp,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }

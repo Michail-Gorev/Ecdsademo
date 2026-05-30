@@ -33,7 +33,6 @@ class GenerateSignUseCase {
         do {
             //FIXME заменить на "честную" генерацию случайного KBigInteger (и вынести в модуль math)
             k = Random.nextInt(11, 1239232312).toKBigInteger()*"1000000000000000".toKBigInteger()
-            println("Random: $k, gp: (${gpPoint.x}; ${gpPoint.y})")
             rPoint = gpPoint.multiply(k)
             r = rPoint.x % n
             // Нормализация (выглядит необходимой)

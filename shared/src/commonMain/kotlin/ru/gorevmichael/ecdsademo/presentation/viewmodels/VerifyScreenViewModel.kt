@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.gorevmichael.math.domain.models.Point
 import ru.gorevmichael.sign.data.secp256_k1.Secp256k1SignConfig
+import ru.gorevmichael.sign.domain.models.SignConfig
+import ru.gorevmichael.sign.domain.usecases.LoadCustomSignConfigsUseCase
 import ru.gorevmichael.sign.domain.usecases.VerifySignUseCase
 
 data class VerifyUiState(
@@ -18,17 +20,36 @@ data class VerifyUiState(
     val publicKeyJson: String = "",
     val signatureJson: String = "",
     val isValid: Boolean? = null,
-    val error: String? = null
+    val error: String? = null,
+    val configs: List<Pair<String, SignConfig>> = emptyList(),
+    val selectedConfig: Pair<String, SignConfig> = "secp256k1" to Secp256k1SignConfig()
 )
 
 class VerifyScreenViewModel(
     private val verifySignUseCase: VerifySignUseCase = VerifySignUseCase(),
-    private val signConfig: Secp256k1SignConfig = Secp256k1SignConfig()
+    private val loadCustomSignConfigsUseCase: LoadCustomSignConfigsUseCase = LoadCustomSignConfigsUseCase()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(VerifyUiState())
     private val _viewModelScope = CoroutineScope(Dispatchers.IO)
     val uiState = _uiState.asStateFlow()
+
+    init {
+        _viewModelScope.launch {
+            loadCustomSignConfigsUseCase().collect { configs ->
+                val defaultConfig = "secp256k1" to Secp256k1SignConfig()
+                _uiState.update {
+                    it.copy(
+                        configs = listOf(defaultConfig) + configs
+                    )
+                }
+            }
+        }
+    }
+
+    fun onConfigSelected(config: Pair<String, SignConfig>) {
+        _uiState.update { it.copy(selectedConfig = config, isValid = null, error = null) }
+    }
 
     fun onMessageChanged(message: String) {
         _uiState.update { it.copy(message = message, isValid = null, error = null) }
@@ -53,14 +74,14 @@ class VerifyScreenViewModel(
             try {
                 val x = parseKBigInteger(state.publicKeyJson, "x")
                 val y = parseKBigInteger(state.publicKeyJson, "y")
-                val publicKey = Point(x, y, signConfig.curveConfig)
+                val publicKey = Point(x, y, state.selectedConfig.second.curveConfig)
 
                 val r = parseKBigInteger(state.signatureJson, "r")
                 val s = parseKBigInteger(state.signatureJson, "s")
 
                 val isValid = verifySignUseCase(
                     message = state.message,
-                    signConfig = signConfig,
+                    signConfig = state.selectedConfig.second,
                     publicKey = publicKey,
                     signature = Pair(r, s)
                 )
@@ -68,7 +89,12 @@ class VerifyScreenViewModel(
                 _uiState.update { it.copy(isValid = isValid, error = null) }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _uiState.update { it.copy(error = "Ошибка: ${e.message ?: "Неверный формат"}", isValid = null) }
+                _uiState.update {
+                    it.copy(
+                        error = "Ошибка: ${e.message ?: "Неверный формат"}",
+                        isValid = null
+                    )
+                }
             }
         }
     }

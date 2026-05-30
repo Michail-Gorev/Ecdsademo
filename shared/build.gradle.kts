@@ -51,7 +51,9 @@ kotlin {
             implementation(project(":core"))
             implementation(project(":sign"))
             implementation(project(":math"))
+            implementation(project(":files"))
             implementation("io.github.gatrongdev:kbignum:0.0.19")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

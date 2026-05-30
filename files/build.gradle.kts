@@ -62,6 +62,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
                 // Add KMP dependencies here
             }
         }

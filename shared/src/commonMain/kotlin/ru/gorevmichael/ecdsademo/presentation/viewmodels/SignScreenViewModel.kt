@@ -11,37 +11,54 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.gorevmichael.sign.data.secp256_k1.Secp256k1SignConfig
+import ru.gorevmichael.sign.domain.models.SignConfig
 import ru.gorevmichael.sign.domain.usecases.GeneratePublicKeyUseCase
 import ru.gorevmichael.sign.domain.usecases.GenerateSignUseCase
+import ru.gorevmichael.sign.domain.usecases.LoadCustomSignConfigsUseCase
 
 data class SignUiState(
     val message: String = "",
     val privateKey: String = "",
     val publicKey: String? = null,
     val signatureJson: String? = null,
-    val error: String? = null
+    val error: String? = null,
+    val configs: List<Pair<String, SignConfig>> = emptyList(),
+    val selectedConfig: Pair<String, SignConfig> = "secp256k1" to Secp256k1SignConfig()
 )
 
 class SignScreenViewModel(
     private val generateSignUseCase: GenerateSignUseCase = GenerateSignUseCase(),
     private val generatePublicKeyUseCase: GeneratePublicKeyUseCase = GeneratePublicKeyUseCase(),
-    private val signConfig: Secp256k1SignConfig = Secp256k1SignConfig()
+    private val loadCustomSignConfigsUseCase: LoadCustomSignConfigsUseCase = LoadCustomSignConfigsUseCase()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignUiState())
     private val _viewModelScope = CoroutineScope(Dispatchers.IO)
     val uiState = _uiState.asStateFlow()
 
-    fun onMessageChanged(message: String) {
+    init {
         _viewModelScope.launch {
-            _uiState.update { it.copy(message = message, error = null) }
+            loadCustomSignConfigsUseCase().collect { configs ->
+                val defaultConfig = "secp256k1" to Secp256k1SignConfig()
+                _uiState.update {
+                    it.copy(
+                        configs = listOf(defaultConfig) + configs
+                    )
+                }
+            }
         }
     }
 
+    fun onConfigSelected(config: Pair<String, SignConfig>) {
+        _uiState.update { it.copy(selectedConfig = config, error = null) }
+    }
+
+    fun onMessageChanged(message: String) {
+        _uiState.update { it.copy(message = message, error = null) }
+    }
+
     fun onPrivateKeyChanged(privateKey: String) {
-        _viewModelScope.launch {
-            _uiState.update { it.copy(privateKey = privateKey, error = null) }
-        }
+        _uiState.update { it.copy(privateKey = privateKey, error = null) }
     }
 
     fun generateSignature() {
@@ -56,7 +73,7 @@ class SignScreenViewModel(
                 val pk = KBigInteger.fromString(state.privateKey)
                 val (r, s) = generateSignUseCase(
                     message = state.message,
-                    signConfig = signConfig,
+                    signConfig = state.selectedConfig.second,
                     privateKey = pk
                 )
                 generatePublicKey()
@@ -78,10 +95,14 @@ class SignScreenViewModel(
 
     private fun generatePublicKey() {
         _viewModelScope.launch {
-            val privateKey = _uiState.value.privateKey
+            val state = _uiState.value
+            val privateKey = state.privateKey
             require(privateKey.isNotBlank()) { "Приватный ключ не может быть пустым!" }
             val pubKey =
-                generatePublicKeyUseCase(privateKey.toKBigInteger(), signConfig.generationPoint)
+                generatePublicKeyUseCase(
+                    privateKey.toKBigInteger(),
+                    state.selectedConfig.second.generationPoint
+                )
             val json = """
                 {
                   "x": "${pubKey.x}",

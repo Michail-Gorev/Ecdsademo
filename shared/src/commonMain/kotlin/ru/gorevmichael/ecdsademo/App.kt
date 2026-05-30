@@ -5,16 +5,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import ru.gorevmichael.ecdsademo.presentation.ui.CreateCustomSignConfigScreen
 import ru.gorevmichael.ecdsademo.presentation.ui.SignScreen
 import ru.gorevmichael.ecdsademo.presentation.ui.VerifyScreen
 
 enum class Screen {
-    Sign, Verify
+    Sign, Verify, CreateConfig
 }
 
 @Composable
-@Preview
 fun App() {
     //FIXME переделать с использованием derivedState(?)
     var currentScreen by remember { mutableStateOf(Screen.Sign) }
@@ -39,6 +38,14 @@ fun App() {
                             Text(text = "✔\uFE0F", style = MaterialTheme.typography.titleLarge)
                         }
                     )
+                    NavigationBarItem(
+                        selected = currentScreen == Screen.CreateConfig,
+                        onClick = { currentScreen = Screen.CreateConfig },
+                        label = { Text("Создание конфига") },
+                        icon = {
+                            Text(text = "\uD83C\uDFA8", style = MaterialTheme.typography.titleLarge)
+                        }
+                    )
                 }
             }
         ) { innerPadding ->
@@ -46,6 +53,7 @@ fun App() {
                 when (currentScreen) {
                     Screen.Sign -> SignScreen()
                     Screen.Verify -> VerifyScreen()
+                    Screen.CreateConfig -> CreateCustomSignConfigScreen()
                 }
             }
         }

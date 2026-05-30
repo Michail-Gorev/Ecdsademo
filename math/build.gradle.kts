@@ -63,6 +63,7 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.stdlib)
                 implementation("io.github.gatrongdev:kbignum:0.0.19")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
                 implementation(project(":core"))
                 // Add KMP dependencies here
             }

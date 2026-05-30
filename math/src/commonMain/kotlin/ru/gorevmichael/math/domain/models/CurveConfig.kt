@@ -6,4 +6,14 @@ open class CurveConfig(
     open val a: KBigInteger,
     open val b: KBigInteger,
     open val p: KBigInteger
-)
+) {
+    override fun toString(): String {
+        return """
+            CurveConfig {
+                a: $a;
+                b: $b;
+                p: $p 
+            }
+        """.trimIndent()
+    }
+}
