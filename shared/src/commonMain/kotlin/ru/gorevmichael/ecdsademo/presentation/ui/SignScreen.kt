@@ -51,7 +51,7 @@ fun SignScreen(
                 value = uiState.selectedConfig.first,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Конфигурация (Curve)") },
+                label = { Text("Конфигурация подписи") },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
                 modifier = Modifier.menuAnchor(),
