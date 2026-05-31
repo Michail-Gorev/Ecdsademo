@@ -1,10 +1,8 @@
 package ru.gorevmichael.ecdsademo.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.github.gatrongdev.kbignum.math.KBigInteger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -31,7 +29,6 @@ class CreateCustomSignConfigViewModel(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CreateCustomSignConfigUiState())
-    private val _viewModelScope = CoroutineScope(Dispatchers.IO)
     val uiState = _uiState.asStateFlow()
 
     fun onNameChanged(value: String) = _uiState.update { it.copy(name = value, isSaved = false, error = null) }
@@ -43,7 +40,7 @@ class CreateCustomSignConfigViewModel(
     fun onNChanged(value: String) = _uiState.update { it.copy(n = value, isSaved = false, error = null) }
 
     fun saveConfig() {
-        _viewModelScope.launch {
+        viewModelScope.launch {
             val state = _uiState.value
             if (state.name.isBlank() || state.a.isBlank() || state.b.isBlank() || 
                 state.p.isBlank() || state.gx.isBlank() || state.gy.isBlank() || state.n.isBlank()) {

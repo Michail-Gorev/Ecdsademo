@@ -1,10 +1,8 @@
 package ru.gorevmichael.ecdsademo.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.github.gatrongdev.kbignum.math.KBigInteger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -31,11 +29,10 @@ class VerifyScreenViewModel(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(VerifyUiState())
-    private val _viewModelScope = CoroutineScope(Dispatchers.IO)
     val uiState = _uiState.asStateFlow()
 
     init {
-        _viewModelScope.launch {
+        viewModelScope.launch {
             loadCustomSignConfigsUseCase().collect { configs ->
                 val defaultConfig = "secp256k1" to Secp256k1SignConfig()
                 _uiState.update {
@@ -64,7 +61,7 @@ class VerifyScreenViewModel(
     }
 
     fun verifySignature() {
-        _viewModelScope.launch {
+        viewModelScope.launch {
             val state = _uiState.value
             if (state.message.isBlank() || state.publicKeyJson.isBlank() || state.signatureJson.isBlank()) {
                 _uiState.update { it.copy(error = "Все поля должны быть заполнены!") }

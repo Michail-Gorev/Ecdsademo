@@ -1,11 +1,9 @@
 package ru.gorevmichael.ecdsademo.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import io.github.gatrongdev.kbignum.math.KBigInteger
 import io.github.gatrongdev.kbignum.math.toKBigInteger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -33,11 +31,10 @@ class SignScreenViewModel(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignUiState())
-    private val _viewModelScope = CoroutineScope(Dispatchers.IO)
     val uiState = _uiState.asStateFlow()
 
     init {
-        _viewModelScope.launch {
+        viewModelScope.launch {
             loadCustomSignConfigsUseCase().collect { configs ->
                 val defaultConfig = "secp256k1" to Secp256k1SignConfig()
                 _uiState.update {
@@ -62,7 +59,7 @@ class SignScreenViewModel(
     }
 
     fun generateSignature() {
-        _viewModelScope.launch {
+        viewModelScope.launch {
             val state = _uiState.value
             if (state.message.isBlank() || state.privateKey.isBlank()) {
                 _uiState.update { it.copy(error = "Все поля должны быть заполнены!") }
@@ -80,8 +77,8 @@ class SignScreenViewModel(
 
                 val json = """
                 {
-                  "r": "${r}",
-                  "s": "${s}"
+                  "r": "$r",
+                  "s": "$s"
                 }
             """.trimIndent()
 
@@ -94,7 +91,7 @@ class SignScreenViewModel(
     }
 
     private fun generatePublicKey() {
-        _viewModelScope.launch {
+        viewModelScope.launch {
             val state = _uiState.value
             val privateKey = state.privateKey
             require(privateKey.isNotBlank()) { "Приватный ключ не может быть пустым!" }
