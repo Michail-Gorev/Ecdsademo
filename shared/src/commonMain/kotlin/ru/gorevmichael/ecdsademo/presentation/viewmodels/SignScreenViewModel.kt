@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import ru.gorevmichael.sign.data.secp256_k1.Secp256k1SignConfig
-import ru.gorevmichael.sign.domain.models.SignConfig
-import ru.gorevmichael.sign.domain.usecases.GeneratePublicKeyUseCase
-import ru.gorevmichael.sign.domain.usecases.GenerateSignUseCase
-import ru.gorevmichael.sign.domain.usecases.LoadCustomSignConfigsUseCase
+import ru.gorevmichael.sign_v1.data.secp256_k1.Secp256k1SignConfig
+import ru.gorevmichael.sign_v1.domain.models.SignConfig
+import ru.gorevmichael.sign_v1.domain.usecases.GeneratePublicKeyUseCase
+import ru.gorevmichael.sign_v1.domain.usecases.GenerateSignUseCase
+import ru.gorevmichael.sign_v1.domain.usecases.LoadCustomSignConfigsUseCase
 
 data class SignUiState(
     val message: String = "",

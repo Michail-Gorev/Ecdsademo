@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.gorevmichael.math.domain.models.CurveConfig
 import ru.gorevmichael.math.domain.models.Point
-import ru.gorevmichael.sign.domain.models.SignConfig
-import ru.gorevmichael.sign.domain.usecases.SaveCustomSignConfigUseCase
+import ru.gorevmichael.sign_v1.domain.models.SignConfig
+import ru.gorevmichael.sign_v1.domain.usecases.SaveCustomSignConfigUseCase
 
 data class CreateCustomSignConfigUiState(
     val name: String = "",

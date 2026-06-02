@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.gorevmichael.math.domain.models.Point
-import ru.gorevmichael.sign.data.secp256_k1.Secp256k1SignConfig
-import ru.gorevmichael.sign.domain.models.SignConfig
-import ru.gorevmichael.sign.domain.usecases.LoadCustomSignConfigsUseCase
-import ru.gorevmichael.sign.domain.usecases.VerifySignUseCase
+import ru.gorevmichael.sign_v1.data.secp256_k1.Secp256k1SignConfig
+import ru.gorevmichael.sign_v1.domain.models.SignConfig
+import ru.gorevmichael.sign_v1.domain.usecases.LoadCustomSignConfigsUseCase
+import ru.gorevmichael.sign_v1.domain.usecases.VerifySignUseCase
 
 data class VerifyUiState(
     val message: String = "",

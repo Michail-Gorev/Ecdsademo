@@ -17,7 +17,7 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     androidLibrary {
        namespace = "ru.gorevmichael.ecdsademo.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -33,34 +33,34 @@ kotlin {
            isIncludeAndroidResources = true
        }
     }
-    
+
     sourceSets {
-        androidMain.dependencies {
-            implementation(libs.compose.uiToolingPreview)
-        }
         commonMain.dependencies {
+            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.6"))
+            implementation("io.insert-koin:koin-core")
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
-            implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-
             implementation(project(":core"))
-            implementation(project(":sign"))
+            implementation(project(":annotations"))
+
+            val includedFeatures = (properties["includedFeatures"] as String).split(",")
+            includedFeatures.forEach { feature ->
+                implementation(project(":$feature"))
+            }
+
             implementation(project(":math"))
             implementation(project(":files"))
             implementation("io.github.gatrongdev:kbignum:0.0.19")
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
         }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
     }
-}
-
-dependencies {
-    androidRuntimeClasspath(libs.compose.uiTooling)
 }

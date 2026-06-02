@@ -1,11 +1,15 @@
+@file:OptIn(KspExperimental::class)
+
+import com.google.devtools.ksp.KspExperimental
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.androidLint)
+    id("com.google.devtools.ksp") version "2.3.7"
 }
 
 kotlin {
-
     // Target declarations - add or remove as needed below. These define
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
@@ -60,10 +64,17 @@ kotlin {
     // See: https://kotlinlang.org/docs/multiplatform-hierarchy.html
     sourceSets {
         commonMain {
+            //TODO убрать (посмотреть и изучить подробно альтернативы)
+            kotlin.srcDir(
+                "$buildDir/generated/ksp/metadata/commonMain/kotlin"
+            )
             dependencies {
+                implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.6"))
+                implementation("io.insert-koin:koin-core")
                 implementation(libs.kotlin.stdlib)
                 implementation("io.github.gatrongdev:kbignum:0.0.19")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+                implementation(project(":annotations"))
                 // Add KMP dependencies here
             }
         }
@@ -100,5 +111,12 @@ kotlin {
             }
         }
     }
-
+}
+//KMP-compatible implementation для процессора KSP
+dependencies {
+    add("kspCommonMainMetadata", project(":build_processor"))
+}
+ksp {
+    useKsp2 = true
+    arg("includedFeatures", properties["includedFeatures"] as String)
 }
