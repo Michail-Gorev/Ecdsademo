@@ -13,6 +13,7 @@ enum class Screen {
     Sign, Verify, CreateConfig
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
     //FIXME переделать с использованием derivedState(?)
