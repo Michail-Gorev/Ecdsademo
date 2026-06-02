@@ -1,20 +1,15 @@
 package ru.gorevmichael.math.domain.models
 
-import io.github.gatrongdev.kbignum.math.KBigInteger
-import io.github.gatrongdev.kbignum.math.div
-import io.github.gatrongdev.kbignum.math.minus
-import io.github.gatrongdev.kbignum.math.plus
-import io.github.gatrongdev.kbignum.math.rem
-import io.github.gatrongdev.kbignum.math.times
-import io.github.gatrongdev.kbignum.math.toKBigInteger
+import com.ionspin.kotlin.bignum.integer.BigInteger
+import com.ionspin.kotlin.bignum.integer.toBigInteger
 import ru.gorevmichael.math.domain.inverters.ModulusNumberInverter
 
 /**
  * Класс, описывающий точку и операции над ней
  */
 open class Point(
-    x: KBigInteger,
-    y: KBigInteger,
+    x: BigInteger,
+    y: BigInteger,
     curveConfig: CurveConfig
 ) {
     init {
@@ -26,30 +21,30 @@ open class Point(
         }
     }
 
-    open val x: KBigInteger = x
-    open val y: KBigInteger = y
+    open val x: BigInteger = x
+    open val y: BigInteger = y
     open val curveConfig: CurveConfig = curveConfig
 
     private val inverter = ModulusNumberInverter(curveConfig.p)
 
-    private fun KBigInteger.modPositive(m: KBigInteger): KBigInteger {
+    private fun BigInteger.modPositive(m: BigInteger): BigInteger {
         val rem = this % m
-        return if (rem < KBigInteger.ZERO) rem + m else rem
+        return if (rem < BigInteger.ZERO) rem + m else rem
     }
 
     fun add(point: Point): Point {
         val p = curveConfig.p
 
         if (this == point) {
-            if (this.y == KBigInteger.ZERO) {
+            if (this.y == BigInteger.ZERO) {
                 throw IllegalArgumentException("Cannot double point with y=0")
             }
-            val slopeNum = (3.toKBigInteger() * this.x.pow(2) + curveConfig.a).modPositive(p)
-            val slopeDen = (2.toKBigInteger() * this.y).modPositive(p)
+            val slopeNum = (3.toBigInteger() * this.x.pow(2) + curveConfig.a).modPositive(p)
+            val slopeDen = (2.toBigInteger() * this.y).modPositive(p)
             val slope = slopeNum * inverter.inverse(slopeDen) % p
             val slopeNorm = slope.modPositive(p)
 
-            val x3 = (slopeNorm.pow(2) - 2.toKBigInteger() * this.x).modPositive(p)
+            val x3 = (slopeNorm.pow(2) - 2.toBigInteger() * this.x).modPositive(p)
             val y3 = (slopeNorm * (this.x - x3) - this.y).modPositive(p)
 
             return Point(x3, y3, curveConfig)
@@ -70,11 +65,11 @@ open class Point(
         return Point(x3, y3, curveConfig)
     }
 
-    fun multiply(times: KBigInteger): Point {
-        if (times == KBigInteger.ZERO) {
+    fun multiply(times: BigInteger): Point {
+        if (times == BigInteger.ZERO) {
             throw IllegalArgumentException("Cannot multiply by zero")
         }
-        if (times == KBigInteger.ONE) {
+        if (times == BigInteger.ONE) {
             return this
         }
 
@@ -82,12 +77,12 @@ open class Point(
         var current = this
         var exp = times
 
-        while (exp > KBigInteger.ZERO) {
-            if (exp % 2.toKBigInteger() == KBigInteger.ONE) {
+        while (exp > BigInteger.ZERO) {
+            if (exp % 2.toBigInteger() == BigInteger.ONE) {
                 result = result?.add(current) ?: current
             }
             current = current.add(current)
-            exp /= 2.toKBigInteger()
+            exp /= 2.toBigInteger()
         }
 
         return result ?: throw IllegalStateException("Multiplication failed")

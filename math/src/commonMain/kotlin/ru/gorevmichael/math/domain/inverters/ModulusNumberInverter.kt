@@ -1,33 +1,28 @@
 package ru.gorevmichael.math.domain.inverters
 
-import io.github.gatrongdev.kbignum.math.KBigInteger
-import io.github.gatrongdev.kbignum.math.div
-import io.github.gatrongdev.kbignum.math.minus
-import io.github.gatrongdev.kbignum.math.plus
-import io.github.gatrongdev.kbignum.math.rem
-import io.github.gatrongdev.kbignum.math.times
+import com.ionspin.kotlin.bignum.integer.BigInteger
 import ru.gorevmichael.core.interfaces.NumberInverter
 
 /**
  * Класс для получения числа, обратного по модулю, используя расширенный алгоритм Евклида
  */
-class ModulusNumberInverter(private val modulus: KBigInteger) : NumberInverter {
+class ModulusNumberInverter(private val modulus: BigInteger) : NumberInverter {
 
-    override fun inverse(value: KBigInteger): KBigInteger {
+    override fun inverse(value: BigInteger): BigInteger {
         var a = value % modulus
-        if (a < KBigInteger.ZERO) {
+        if (a < BigInteger.ZERO) {
             a += modulus
         }
 
         var m = modulus
-        var y = KBigInteger.ZERO
-        var x = KBigInteger.ONE
+        var y = BigInteger.ZERO
+        var x = BigInteger.ONE
 
-        if (m == KBigInteger.ONE) {
-            return KBigInteger.ZERO
+        if (m == BigInteger.ONE) {
+            return BigInteger.ZERO
         }
 
-        while (a > KBigInteger.ONE) {
+        while (a > BigInteger.ONE) {
             val q = a / m
             var t = m
 
@@ -39,7 +34,7 @@ class ModulusNumberInverter(private val modulus: KBigInteger) : NumberInverter {
             x = t
         }
 
-        if (x < KBigInteger.ZERO) {
+        if (x < BigInteger.ZERO) {
             x += modulus
         }
 
@@ -47,15 +42,15 @@ class ModulusNumberInverter(private val modulus: KBigInteger) : NumberInverter {
     }
 
     override fun checkAreInverse(
-        n1: KBigInteger,
-        n2: KBigInteger
+        n1: BigInteger,
+        n2: BigInteger
     ): Boolean {
         val product = (n1 * n2) % modulus
-        val normalizedProduct = if (product < KBigInteger.ZERO) {
+        val normalizedProduct = if (product < BigInteger.ZERO) {
             product + modulus
         } else {
             product
         }
-        return normalizedProduct == KBigInteger.ONE
+        return normalizedProduct == BigInteger.ONE
     }
 }

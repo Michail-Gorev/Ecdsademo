@@ -2,7 +2,8 @@ package ru.gorevmichael.ecdsademo.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.gatrongdev.kbignum.math.KBigInteger
+import com.ionspin.kotlin.bignum.integer.BigInteger
+import com.ionspin.kotlin.bignum.integer.toBigInteger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -96,9 +97,9 @@ class VerifyScreenViewModel(
         }
     }
 
-    private fun parseKBigInteger(json: String, key: String): KBigInteger {
+    private fun parseKBigInteger(json: String, key: String): BigInteger {
         val regex = "\"$key\"\\s*:\\s*\"([^\"]+)\"".toRegex()
         val match = regex.find(json) ?: throw IllegalArgumentException("Ключ $key не найден")
-        return KBigInteger.fromString(match.groupValues[1])
+        return match.groupValues[1].toBigInteger(10)
     }
 }

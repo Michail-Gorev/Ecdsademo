@@ -55,7 +55,7 @@ kotlin {
 
             implementation(project(":math"))
             implementation(project(":files"))
-            implementation("io.github.gatrongdev:kbignum:0.0.19")
+            implementation(libs.bignum)
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
         }
 

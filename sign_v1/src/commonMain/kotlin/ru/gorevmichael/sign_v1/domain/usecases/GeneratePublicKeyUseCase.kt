@@ -1,10 +1,10 @@
 package ru.gorevmichael.sign_v1.domain.usecases
 
-import io.github.gatrongdev.kbignum.math.KBigInteger
+import com.ionspin.kotlin.bignum.integer.BigInteger
 import ru.gorevmichael.math.domain.models.Point
 
 class GeneratePublicKeyUseCase {
-    operator fun invoke(privateKey: KBigInteger, gp: Point): Point {
+    operator fun invoke(privateKey: BigInteger, gp: Point): Point {
         return gp.multiply(privateKey)
     }
 }

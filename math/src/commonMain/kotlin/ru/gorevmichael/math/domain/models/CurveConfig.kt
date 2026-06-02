@@ -1,11 +1,11 @@
 package ru.gorevmichael.math.domain.models
 
-import io.github.gatrongdev.kbignum.math.KBigInteger
+import com.ionspin.kotlin.bignum.integer.BigInteger
 
 open class CurveConfig(
-    open val a: KBigInteger,
-    open val b: KBigInteger,
-    open val p: KBigInteger
+    open val a: BigInteger,
+    open val b: BigInteger,
+    open val p: BigInteger
 ) {
     override fun toString(): String {
         return """

@@ -39,18 +39,21 @@ kotlin {
     iosX64 {
         binaries.framework {
             baseName = xcfName
+            isStatic = true
         }
     }
 
     iosArm64 {
         binaries.framework {
             baseName = xcfName
+            isStatic = true
         }
     }
 
     iosSimulatorArm64 {
         binaries.framework {
             baseName = xcfName
+            isStatic = true
         }
     }
 
@@ -63,7 +66,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
-                implementation("io.github.gatrongdev:kbignum:0.0.19")
+                implementation(libs.bignum)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
                 implementation(project(":core"))
                 // Add KMP dependencies here

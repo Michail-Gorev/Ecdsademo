@@ -2,7 +2,7 @@ package ru.gorevmichael.ecdsademo.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.gatrongdev.kbignum.math.KBigInteger
+import com.ionspin.kotlin.bignum.integer.toBigInteger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -50,19 +50,19 @@ class CreateCustomSignConfigViewModel(
 
             try {
                 val curveConfig = CurveConfig(
-                    a = KBigInteger.fromString(state.a),
-                    b = KBigInteger.fromString(state.b),
-                    p = KBigInteger.fromString(state.p)
+                    a = state.a.toBigInteger(10),
+                    b = state.b.toBigInteger(10),
+                    p = state.p.toBigInteger(10)
                 )
                 val generationPoint = Point(
-                    x = KBigInteger.fromString(state.gx),
-                    y = KBigInteger.fromString(state.gy),
+                    x = state.gx.toBigInteger(10),
+                    y = state.gy.toBigInteger(10),
                     curveConfig = curveConfig
                 )
                 val signConfig = SignConfig(
                     generationPoint = generationPoint,
                     curveConfig = curveConfig,
-                    order = KBigInteger.fromString(state.n)
+                    order = state.n.toBigInteger(10)
                 )
 
                 saveCustomSignConfigUseCase(state.name, signConfig)

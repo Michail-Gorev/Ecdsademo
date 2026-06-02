@@ -1,6 +1,6 @@
 package ru.gorevmichael.sign_v1.domain.usecases
 
-import io.github.gatrongdev.kbignum.math.KBigInteger
+import com.ionspin.kotlin.bignum.integer.toBigInteger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.gorevmichael.files.domain.platformSpeciefic.InternalStorage
@@ -33,17 +33,17 @@ class LoadCustomSignConfigsUseCase {
         val order = getValue(json, "order")
 
         val curveConfig = CurveConfig(
-            KBigInteger.fromString(a),
-            KBigInteger.fromString(b),
-            KBigInteger.fromString(p)
+            a.toBigInteger(10),
+            b.toBigInteger(10),
+            p.toBigInteger(10)
         )
         val genPoint = Point(
-            KBigInteger.fromString(x),
-            KBigInteger.fromString(y),
+            x.toBigInteger(10),
+            y.toBigInteger(10),
             curveConfig
         )
         
-        return name to SignConfig(genPoint, curveConfig, KBigInteger.fromString(order))
+        return name to SignConfig(genPoint, curveConfig, order.toBigInteger(10))
     }
 
     private fun getValue(json: String, key: String): String {

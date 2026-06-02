@@ -43,18 +43,21 @@ kotlin {
     iosX64 {
         binaries.framework {
             baseName = xcfName
+            isStatic = true
         }
     }
 
     iosArm64 {
         binaries.framework {
             baseName = xcfName
+            isStatic = true
         }
     }
 
     iosSimulatorArm64 {
         binaries.framework {
             baseName = xcfName
+            isStatic = true
         }
     }
 
@@ -70,7 +73,7 @@ kotlin {
                 implementation(libs.kotlin.stdlib)
                 implementation("dev.whyoleg.cryptography:cryptography-core:0.6.0")
                 implementation("dev.whyoleg.cryptography:cryptography-provider-optimal:0.6.0")
-                implementation("io.github.gatrongdev:kbignum:0.0.19")
+                implementation(libs.bignum)
                 implementation("io.insert-koin:koin-core")
                 implementation(project(":core"))
                 implementation(project(":math"))

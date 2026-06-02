@@ -1,16 +1,16 @@
 package ru.gorevmichael.sign_v1.domain.usecases
 
-import io.github.gatrongdev.kbignum.math.KBigInteger
-import io.github.gatrongdev.kbignum.math.toKBigInteger
+import com.ionspin.kotlin.bignum.integer.BigInteger
+import com.ionspin.kotlin.bignum.integer.toBigInteger
 import ru.gorevmichael.files.domain.usecases.SaveJsonUseCase
 import kotlin.random.Random
 //TODO использовать
 class GenerateAndSavePrivateKeyUseCase {
-    operator fun invoke(): KBigInteger {
+    operator fun invoke(): BigInteger {
         val seed = 7891341234
         val order = Random(seed).nextInt(11, 2019)
-        val privateKey = Random(seed).nextInt(233, 823567274).toKBigInteger()
-            .multiply("47".toKBigInteger().pow(order))
+        val privateKey = Random(seed).nextInt(233, 823567274).toBigInteger()
+            .multiply("47".toBigInteger().pow(order))
         //TODO объединить и вынести пути
         val saveJsonUseCase: SaveJsonUseCase = SaveJsonUseCase(
             path = "private_key.json",

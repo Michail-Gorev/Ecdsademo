@@ -1,6 +1,6 @@
 package ru.gorevmichael.core.interfaces
 
-import io.github.gatrongdev.kbignum.math.KBigInteger
+import com.ionspin.kotlin.bignum.integer.BigInteger
 
 /**
  * Интерфейс для объектов, отвечающих за нахождение обратного числа
@@ -11,16 +11,16 @@ interface NumberInverter {
 
     /**
      * Возвращает число, обратное переданному
-     * @param value [KBigInteger] - число, обратное для которого необходимо найти
-     * @return [KBigInteger] - число, обратное переданному
+     * @param value [BigInteger] - число, обратное для которого необходимо найти
+     * @return [BigInteger] - число, обратное переданному
      */
-    fun inverse(value: KBigInteger): KBigInteger
+    fun inverse(value: BigInteger): BigInteger
 
     /**
      * Проверяет, являются ли два числа обратными
-     * @param n1 [KBigInteger] - первое число
-     * @param n2 [KBigInteger] - второе число
+     * @param n1 [BigInteger] - первое число
+     * @param n2 [BigInteger] - второе число
      * @return [Boolean] - true, если числа являются обратными, false - иначе
      */
-    fun checkAreInverse(n1: KBigInteger, n2: KBigInteger): Boolean
+    fun checkAreInverse(n1: BigInteger, n2: BigInteger): Boolean
 }

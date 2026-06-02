@@ -2,8 +2,7 @@ package ru.gorevmichael.ecdsademo.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.gatrongdev.kbignum.math.KBigInteger
-import io.github.gatrongdev.kbignum.math.toKBigInteger
+import com.ionspin.kotlin.bignum.integer.toBigInteger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -67,7 +66,7 @@ class SignScreenViewModel(
             }
 
             try {
-                val pk = KBigInteger.fromString(state.privateKey)
+                val pk = state.privateKey.toBigInteger(10)
                 val (r, s) = generateSignUseCase(
                     message = state.message,
                     signConfig = state.selectedConfig.second,
@@ -97,7 +96,7 @@ class SignScreenViewModel(
             require(privateKey.isNotBlank()) { "Приватный ключ не может быть пустым!" }
             val pubKey =
                 generatePublicKeyUseCase(
-                    privateKey.toKBigInteger(),
+                    privateKey.toBigInteger(10),
                     state.selectedConfig.second.generationPoint
                 )
             val json = """

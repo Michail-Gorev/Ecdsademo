@@ -1,11 +1,8 @@
 package ru.gorevmichael.sign_v1.domain.usecases
 
+import com.ionspin.kotlin.bignum.integer.BigInteger
 import dev.whyoleg.cryptography.CryptographyProvider
 import dev.whyoleg.cryptography.algorithms.SHA256
-import io.github.gatrongdev.kbignum.math.KBigInteger
-import io.github.gatrongdev.kbignum.math.or
-import io.github.gatrongdev.kbignum.math.rem
-import io.github.gatrongdev.kbignum.math.times
 import ru.gorevmichael.math.domain.inverters.ModulusNumberInverter
 import ru.gorevmichael.math.domain.models.Point
 import ru.gorevmichael.sign_v1.domain.models.SignConfig
@@ -15,21 +12,21 @@ class VerifySignUseCase {
         message: Any,
         signConfig: SignConfig,
         publicKey: Point,
-        signature: Pair<KBigInteger, KBigInteger>
+        signature: Pair<BigInteger, BigInteger>
     ): Boolean {
-        if (message !is String && message !is KBigInteger)  {
-            throw IllegalArgumentException("Message must be a string or KBigInteger!")
+        if (message !is String && message !is BigInteger)  {
+            throw IllegalArgumentException("Message must be a string or BigInteger!")
         }
         val n = signConfig.order
         val (r, s) = signature
 
-        val messageToDecode: KBigInteger = when (message) {
-            is KBigInteger -> message
+        val messageToDecode: BigInteger = when (message) {
+            is BigInteger -> message
             is String -> {
                 val hashBytes = CryptographyProvider.Default.get(SHA256).hasher().hash(message.encodeToByteArray())
-                var result = KBigInteger.ZERO
+                var result = BigInteger.ZERO
                 for (byte in hashBytes) {
-                    result = (result shl 8) or KBigInteger.fromInt(byte.toInt() and 0xFF)
+                    result = (result shl 8) or BigInteger.fromInt(byte.toInt() and 0xFF)
                 }
                 result
             }
