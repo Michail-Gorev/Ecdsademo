@@ -6,7 +6,7 @@ import org.koin.dsl.module
 import ru.gorevmichael.annotations.AutoBuildReference
 
 @AutoBuildReference
-actual class KoinSignV1 {
+actual class KoinSign {
     actual val featureModule: Module
         get() = module {
             single<List<String>>(named("platform_specific_koin_module")) {

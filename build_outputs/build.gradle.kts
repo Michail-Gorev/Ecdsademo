@@ -15,7 +15,7 @@ kotlin {
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
-        namespace = "ru.gorevmichael.sign_v1"
+        namespace = "ru.gorevmichael.build_outputs"
         compileSdk {
             version = release(36) { minorApiLevel = 1 }
         }
@@ -38,26 +38,23 @@ kotlin {
     // A step-by-step guide on how to include this library in an XCode
     // project can be found here:
     // https://developer.android.com/kotlin/multiplatform/migrate
-    val xcfName = "sign_v1Kit"
+    val xcfName = "build_outputsKit"
 
     iosX64 {
         binaries.framework {
             baseName = xcfName
-            isStatic = true
         }
     }
 
     iosArm64 {
         binaries.framework {
             baseName = xcfName
-            isStatic = true
         }
     }
 
     iosSimulatorArm64 {
         binaries.framework {
             baseName = xcfName
-            isStatic = true
         }
     }
 
@@ -68,18 +65,18 @@ kotlin {
     // See: https://kotlinlang.org/docs/multiplatform-hierarchy.html
     sourceSets {
         commonMain {
+            //TODO убрать (посмотреть и изучить подробно альтернативы)
+            kotlin.srcDir(
+                "$buildDir/generated/ksp/metadata/commonMain/kotlin"
+            )
             dependencies {
                 implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.6"))
-                implementation(libs.kotlin.stdlib)
-                implementation("dev.whyoleg.cryptography:cryptography-core:0.5.0")
-                implementation("dev.whyoleg.cryptography:cryptography-provider-optimal:0.5.0")
-                implementation(libs.bignum)
                 implementation("io.insert-koin:koin-core")
-                implementation("io.insert-koin:koin-compose:4.0.0")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-                implementation(project(":core"))
-                implementation(project(":math"))
-                implementation(project(":files"))
+                implementation(libs.kotlin.stdlib)
+                val includedFeatures = (properties["includedFeatures"] as String).split(",")
+                includedFeatures.forEach { feature ->
+                    implementation(project(":$feature"))
+                }
                 implementation(project(":annotations"))
                 // Add KMP dependencies here
             }
@@ -119,7 +116,7 @@ kotlin {
     }
 
 }
-//TODO разобраться, как прокидывать отмеченные аннотациями классы из данного модуля наружу
+
 dependencies {
     add("kspCommonMainMetadata", project(":build_processor"))
 }

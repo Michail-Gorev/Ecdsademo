@@ -75,6 +75,7 @@ kotlin {
                 implementation("dev.whyoleg.cryptography:cryptography-provider-optimal:0.5.0")
                 implementation(libs.bignum)
                 implementation("io.insert-koin:koin-core")
+                implementation("io.insert-koin:koin-compose:4.0.0")
                 implementation(project(":core"))
                 implementation(project(":math"))
                 implementation(project(":files"))

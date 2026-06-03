@@ -42,6 +42,7 @@ kotlin {
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
             implementation(libs.compose.ui)
+            implementation("io.insert-koin:koin-compose:4.0.0")
             implementation(libs.compose.components.resources)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
@@ -55,6 +56,7 @@ kotlin {
 
             implementation(project(":math"))
             implementation(project(":files"))
+            implementation(project(":build_outputs"))
             implementation(libs.bignum)
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
         }

@@ -4,8 +4,8 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 
-class AutoBuildProcessorProvider : SymbolProcessorProvider {
+class KoinModuleAutoBuildProcessorProvider : SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-        return AutoBuildProcessor(environment)
+        return KoinModuleAutoBuildProcessor(environment)
     }
 }

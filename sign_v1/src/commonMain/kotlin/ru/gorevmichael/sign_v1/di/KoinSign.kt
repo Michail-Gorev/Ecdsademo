@@ -1,9 +1,9 @@
-package ru.gorevmichael.sign_v2.di
+package ru.gorevmichael.sign_v1.di
 
 import org.koin.core.module.Module
 import ru.gorevmichael.annotations.AutoBuildReference
 
 @AutoBuildReference
-expect class KoinSignV2 {
+expect class KoinSign {
     val featureModule: Module
 }
