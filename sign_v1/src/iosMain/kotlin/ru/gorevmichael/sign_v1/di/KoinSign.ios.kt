@@ -10,7 +10,7 @@ actual class KoinSign {
     actual val featureModule: Module
         get() = module {
             single<List<String>>(named("platform_specific_koin_module")) {
-                listOf("AndroidSpecific FeatureClass 1 v1", "AndroidSpecific FeatureClass 2 v1")
+                listOf("iOSSpecific FeatureClass 1 v1", "iOSSpecific FeatureClass 2 v1")
             }
         }
 }
