@@ -1,6 +1,7 @@
 package ru.gorevmichael.ecdsademo.presentation.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,7 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -27,92 +30,111 @@ fun SignScreen(
     val uiState by viewModel.uiState.collectAsState()
     val clipboardManager = LocalClipboardManager.current
     var expanded by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Text(
-            text = "Генерация подписи",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            OutlinedTextField(
-                value = uiState.selectedConfig.first,
-                onValueChange = {},
-                readOnly = true,
-                label = { Text("Конфигурация подписи") },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-                modifier = Modifier.menuAnchor(),
-                shape = RoundedCornerShape(12.dp)
-            )
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                uiState.configs.forEach { config ->
-                    DropdownMenuItem(
-                        text = { Text(config.first) },
-                        onClick = {
-                            viewModel.onConfigSelected(config)
-                            expanded = false
-                        }
-                    )
+            .pointerInput(Unit) {
+                detectTapGestures {
+                    focusManager.clearFocus()
                 }
             }
-        }
-
-        OutlinedTextField(
-            value = uiState.message,
-            onValueChange = { viewModel.onMessageChanged(it) },
-            label = { Text("Сообщение для подписи") },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Введите сообщение") },
-            shape = RoundedCornerShape(12.dp)
-        )
-
-        OutlinedTextField(
-            value = uiState.privateKey,
-            onValueChange = { viewModel.onPrivateKeyChanged(it) },
-            label = { Text("Приватный ключ") },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Введите приватный ключ (десятичный формат)") },
-            shape = RoundedCornerShape(12.dp)
-        )
-
-        Button(
-            onClick = { viewModel.generateSignature() },
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("Сгенерировать подпись")
-        }
-
-        uiState.error?.let { error ->
             Text(
-                text = error,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall
+                text = "Генерация подписи",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary
             )
-        }
 
-        uiState.signatureJson?.let { json ->
-            ResultCard(title = "Подпись (JSON)", content = json, clipboardManager = clipboardManager)
-        }
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    value = uiState.selectedConfig.first,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Конфигурация подписи") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                    modifier = Modifier.menuAnchor(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    uiState.configs.forEach { config ->
+                        DropdownMenuItem(
+                            text = { Text(config.first) },
+                            onClick = {
+                                viewModel.onConfigSelected(config)
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
 
-        uiState.publicKey?.let { json ->
-            ResultCard(title = "Публичный ключ (JSON)", content = json, clipboardManager = clipboardManager)
+            OutlinedTextField(
+                value = uiState.message,
+                onValueChange = { viewModel.onMessageChanged(it) },
+                label = { Text("Сообщение для подписи") },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("Введите сообщение") },
+                shape = RoundedCornerShape(12.dp)
+            )
+
+            OutlinedTextField(
+                value = uiState.privateKey,
+                onValueChange = { viewModel.onPrivateKeyChanged(it) },
+                label = { Text("Приватный ключ") },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("Введите приватный ключ (десятичный формат)") },
+                shape = RoundedCornerShape(12.dp)
+            )
+
+            Button(
+                onClick = { viewModel.generateSignature() },
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Сгенерировать подпись")
+            }
+
+            uiState.error?.let { error ->
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+            uiState.signatureJson?.let { json ->
+                ResultCard(
+                    title = "Подпись (JSON)",
+                    content = json,
+                    clipboardManager = clipboardManager
+                )
+            }
+
+            uiState.publicKey?.let { json ->
+                ResultCard(
+                    title = "Публичный ключ (JSON)",
+                    content = json,
+                    clipboardManager = clipboardManager
+                )
+            }
         }
     }
 }
@@ -152,3 +174,4 @@ private fun ResultCard(title: String, content: String, clipboardManager: android
         }
     }
 }
+
