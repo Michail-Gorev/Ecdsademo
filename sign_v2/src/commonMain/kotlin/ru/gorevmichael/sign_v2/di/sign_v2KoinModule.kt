@@ -5,6 +5,6 @@ import ru.gorevmichael.annotations.AutoBuildReference
 
 //TODO
 @AutoBuildReference
-expect object KoinSign {
+expect class sign_v2KoinModule() {
     val featureModule: Module
 }

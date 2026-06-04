@@ -120,10 +120,10 @@ kotlin {
 
 }
 //TODO разобраться, как прокидывать отмеченные аннотациями классы из данного модуля наружу
-dependencies {
-    add("kspCommonMainMetadata", project(":build_processor"))
-}
-ksp {
-    useKsp2 = true
-    arg("includedFeatures", properties["includedFeatures"] as String)
-}
+//dependencies {
+//    add("kspCommonMainMetadata", project(":build_processor"))
+//}
+//ksp {
+//    useKsp2 = true
+//    arg("includedFeatures", properties["includedFeatures"] as String)
+//}

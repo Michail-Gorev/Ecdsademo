@@ -119,10 +119,10 @@ kotlin {
 
 }
 
-dependencies {
-    add("kspCommonMainMetadata", project(":build_processor"))
-}
-ksp {
-    useKsp2 = true
-    arg("includedFeatures", properties["includedFeatures"] as String)
-}
+//dependencies {
+//    add("kspCommonMainMetadata", project(":build_processor"))
+//}
+//ksp {
+//    useKsp2 = true
+//    arg("includedFeatures", properties["includedFeatures"] as String)
+//}

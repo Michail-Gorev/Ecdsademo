@@ -9,8 +9,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
-import org.koin.core.qualifier.named
-import ru.gorevmichael.build_outputs.di.FeaturesDIBuilder
+import ru.gorevmichael.core.interfaces.DummyInterface
+import ru.gorevmichael.ecdsademo.di.loadFeatureModules
 import ru.gorevmichael.ecdsademo.presentation.ui.CreateCustomSignConfigScreen
 import ru.gorevmichael.ecdsademo.presentation.ui.SignScreen
 import ru.gorevmichael.ecdsademo.presentation.ui.VerifyScreen
@@ -23,16 +23,16 @@ enum class Screen {
 @Composable
 fun App() {
     //TODO инициализацию коина вынести отсюда
-    val featuresDI = FeaturesDIBuilder()()
+    val featuresDI = loadFeatureModules()
     KoinApplication(
         application = {
-            modules(featuresDI.featureModules)
+            modules(featuresDI)
         },
         content = {
             //FIXME переделать с использованием derivedState(?)
             var currentScreen by remember { mutableStateOf(Screen.Sign) }
             //TODO - для тестов, убрать после них
-            val supportedFeatures = koinInject<List<String>>(named("platform_specific_koin_module"))
+            val supportedFeatures = koinInject<DummyInterface>().dummyMethod()
 
             MaterialTheme {
                 Scaffold(

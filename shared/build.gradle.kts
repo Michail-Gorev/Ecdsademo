@@ -19,19 +19,19 @@ kotlin {
     }
 
     androidLibrary {
-       namespace = "ru.gorevmichael.ecdsademo.shared"
-       compileSdk = libs.versions.android.compileSdk.get().toInt()
-       minSdk = libs.versions.android.minSdk.get().toInt()
-    
-       compilerOptions {
-           jvmTarget = JvmTarget.JVM_11
-       }
-       androidResources {
-           enable = true
-       }
-       withHostTest {
-           isIncludeAndroidResources = true
-       }
+        namespace = "ru.gorevmichael.ecdsademo.shared"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+        androidResources {
+            enable = true
+        }
+        withHostTest {
+            isIncludeAndroidResources = true
+        }
     }
 
     sourceSets {
@@ -48,12 +48,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(project(":core"))
             implementation(project(":annotations"))
-
-            val includedFeatures = (properties["includedFeatures"] as String).split(",")
-            includedFeatures.forEach { feature ->
-                implementation(project(":$feature"))
-            }
-
             implementation(project(":math"))
             implementation(project(":files"))
             implementation(project(":build_outputs"))
@@ -65,4 +59,60 @@ kotlin {
             implementation(libs.kotlin.test)
         }
     }
+}
+val includedFeatures = (properties["includedFeatures"] as String).split(",")
+dependencies {
+    includedFeatures.forEach { feature ->
+        add("commonMainImplementation", project(":$feature"))
+    }
+}
+
+val generateFeaturesLoader by tasks.registering {
+    val outputDir = file("$buildDir/generated/featuresLoader/commonMain/")
+    val packageDir = outputDir.resolve("ru/gorevmichael/ecdsademo/di")
+    packageDir.mkdirs()
+    val featureImports = includedFeatures.joinToString("\n") { feature ->
+        "import ru.gorevmichael.$feature.di.${feature}KoinModule"
+    }
+    val featureModules = includedFeatures.joinToString(",\n    ") { feature ->
+        "${feature}KoinModule().featureModule"
+    }
+    doLast {
+        outputDir.mkdirs()
+        val actualFile = packageDir.resolve("KoinUtils.kt")
+        actualFile.writeText(
+            """
+//Auto-generated file for koin modules
+//Do not edit it manually!
+//@gorevmichael
+package ru.gorevmichael.ecdsademo.di
+                    
+import org.koin.core.module.Module
+$featureImports
+                    
+fun loadFeatureModules(): List<Module> = listOf(
+    $featureModules
+)
+            """.trimIndent()
+        )
+    }
+}
+
+kotlin.sourceSets["commonMain"].kotlin.srcDir(
+    "$buildDir/generated/featuresLoader/commonMain"
+)
+kotlin.sourceSets.forEach { sourceSet ->
+    sourceSet.kotlin.srcDir("$buildDir/generated/featuresLoader/${sourceSet.name}")
+}
+
+tasks.named("compileKotlinMetadata") {
+    dependsOn(generateFeaturesLoader)
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    dependsOn(generateFeaturesLoader)
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
+    dependsOn(generateFeaturesLoader)
 }
