@@ -65,10 +65,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(libs.kotlin.stdlib)
-                implementation(libs.bignum)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-                implementation(project(":core"))
+                api(project(":core"))
                 // Add KMP dependencies here
             }
         }

@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.dependencies
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
@@ -63,11 +65,12 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.6"))
-                implementation("io.insert-koin:koin-core")
-                implementation(libs.kotlin.stdlib)
-                implementation(libs.bignum)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+                //api () - для транзитивной передачи зависимостей в модули-пользователи
+                api(project.dependencies.platform("io.insert-koin:koin-bom:3.5.6"))
+                api("io.insert-koin:koin-core")
+                api(libs.kotlin.stdlib)
+                api(libs.bignum)
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
                 // Add KMP dependencies here
             }
         }

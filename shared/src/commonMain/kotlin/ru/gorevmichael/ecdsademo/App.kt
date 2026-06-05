@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import org.koin.compose.KoinApplication
 import org.koin.compose.koinInject
+import org.koin.core.qualifier.named
 import ru.gorevmichael.core.interfaces.DummyInterface
-import ru.gorevmichael.ecdsademo.di.loadFeatureModules
+import ru.gorevmichael.build_outputs.di.koinModules
 import ru.gorevmichael.ecdsademo.presentation.ui.CreateCustomSignConfigScreen
 import ru.gorevmichael.ecdsademo.presentation.ui.SignScreen
 import ru.gorevmichael.ecdsademo.presentation.ui.VerifyScreen
@@ -23,26 +25,30 @@ enum class Screen {
 @Composable
 fun App() {
     //TODO инициализацию коина вынести отсюда
-    val featuresDI = loadFeatureModules()
     KoinApplication(
         application = {
-            modules(featuresDI)
+            modules(koinModules)
         },
         content = {
             //FIXME переделать с использованием derivedState(?)
             var currentScreen by remember { mutableStateOf(Screen.Sign) }
             //TODO - для тестов, убрать после них
             val supportedFeatures = koinInject<DummyInterface>().dummyMethod()
+            val platformFeatures = koinInject<List<String>>(named("platform_specific"))
+            val commonFeature = koinInject<String>(named("common_feature"))
 
             MaterialTheme {
                 Scaffold(
                     topBar = {
                         Box(
                             modifier = Modifier.fillMaxWidth()
+                                .padding(32.dp)
                                 .wrapContentHeight()
                         ) {
                             Text(
-                                text = "Supported Features: $supportedFeatures"
+                                text = "Supported features: $supportedFeatures\n" +
+                                        "Platform features: $platformFeatures\n" +
+                                        "Common feature: $commonFeature"
                             )
                         }
                     },

@@ -69,18 +69,13 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.6"))
-                implementation(libs.kotlin.stdlib)
                 implementation("dev.whyoleg.cryptography:cryptography-core:0.5.0")
                 implementation("dev.whyoleg.cryptography:cryptography-provider-optimal:0.5.0")
-                implementation(libs.bignum)
-                implementation("io.insert-koin:koin-core")
                 implementation("io.insert-koin:koin-compose:4.0.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-                implementation(project(":core"))
-                implementation(project(":math"))
-                implementation(project(":files"))
-                implementation(project(":annotations"))
+                api(project(":core"))
+                api(project(":math"))
+                api(project(":files"))
                 // Add KMP dependencies here
             }
         }

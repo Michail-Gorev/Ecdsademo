@@ -64,8 +64,9 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(libs.kotlin.stdlib)
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+                // Transitively implements all staff from :core
+                // No need to transit it further
+                implementation(project(":core"))
                 // Add KMP dependencies here
             }
         }

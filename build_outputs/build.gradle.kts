@@ -8,12 +8,10 @@ plugins {
     alias(libs.plugins.androidLint)
     id("com.google.devtools.ksp") version "2.3.7"
 }
+val includedFeatures = (properties["includedFeatures"] as? String)?.split(",") ?: emptyList()
 
 kotlin {
 
-    // Target declarations - add or remove as needed below. These define
-    // which platforms this KMP module supports.
-    // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
         namespace = "ru.gorevmichael.build_outputs"
         compileSdk {
@@ -21,8 +19,7 @@ kotlin {
         }
         minSdk = 31
 
-        withHostTestBuilder {
-        }
+        withHostTestBuilder {}
 
         withDeviceTestBuilder {
             sourceSetTreeName = "test"
@@ -31,68 +28,42 @@ kotlin {
         }
     }
 
-    // For iOS targets, this is also where you should
-    // configure native binary output. For more information, see:
-    // https://kotlinlang.org/docs/multiplatform-build-native-binaries.html#build-xcframeworks
-
-    // A step-by-step guide on how to include this library in an XCode
-    // project can be found here:
-    // https://developer.android.com/kotlin/multiplatform/migrate
     val xcfName = "build_outputsKit"
 
-    iosX64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-    }
+    iosX64 { binaries.framework { baseName = xcfName } }
+    iosArm64 { binaries.framework { baseName = xcfName } }
+    iosSimulatorArm64 { binaries.framework { baseName = xcfName } }
 
-    iosArm64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-    }
-
-    iosSimulatorArm64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-    }
-
-    // Source set declarations.
-    // Declaring a target automatically creates a source set with the same name. By default, the
-    // Kotlin Gradle Plugin creates additional source sets that depend on each other, since it is
-    // common to share sources between related targets.
-    // See: https://kotlinlang.org/docs/multiplatform-hierarchy.html
     sourceSets {
+        androidMain {
+//            kotlin.setSrcDirs(emptyList<String>())
+
+            if (includedFeatures.contains("sign_v2")) {
+                kotlin.srcDir("src/signv2/androidMain/kotlin/ru/gorevmichael/build_outputs/di")
+            } else {
+                kotlin.srcDir("src/signv1/androidMain/kotlin/ru/gorevmichael/build_outputs/di")
+            }
+        }
+
         commonMain {
-            //TODO убрать (посмотреть и изучить подробно альтернативы)
-            kotlin.srcDir(
-                "$buildDir/generated/ksp/metadata/commonMain/kotlin"
-            )
+//            kotlin.setSrcDirs(emptyList<String>())
+
+            if (includedFeatures.contains("sign_v2")) {
+                kotlin.srcDir("src/signv2/commonMain/kotlin/ru/gorevmichael/build_outputs/di")
+            } else {
+                kotlin.srcDir("src/signv1/commonMain/kotlin/ru/gorevmichael/build_outputs/di")
+            }
+
             dependencies {
-                implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.5.6"))
-                implementation("io.insert-koin:koin-core")
-                implementation(libs.kotlin.stdlib)
-                val includedFeatures = (properties["includedFeatures"] as String).split(",")
                 includedFeatures.forEach { feature ->
-                    implementation(project(":$feature"))
+                    api(project(":$feature"))
                 }
-                implementation(project(":annotations"))
-                // Add KMP dependencies here
             }
         }
 
         commonTest {
             dependencies {
                 implementation(libs.kotlin.test)
-            }
-        }
-
-        androidMain {
-            dependencies {
-                // Add Android-specific dependencies here. Note that this source set depends on
-                // commonMain by default and will correctly pull the Android artifacts of any KMP
-                // dependencies declared in commonMain.
             }
         }
 
@@ -105,22 +76,14 @@ kotlin {
         }
 
         iosMain {
-            dependencies {
-                // Add iOS-specific dependencies here. This a source set created by Kotlin Gradle
-                // Plugin (KGP) that each specific iOS target (e.g., iosX64) depends on as
-                // part of KMP’s default source set hierarchy. Note that this source set depends
-                // on common by default and will correctly pull the iOS artifacts of any
-                // KMP dependencies declared in commonMain.
+//            kotlin.setSrcDirs(emptyList<String>())
+
+            if (includedFeatures.contains("sign_v2")) {
+                kotlin.srcDir("src/signv2/iosMain/kotlin/ru/gorevmichael/build_outputs/di")
+            } else {
+                kotlin.srcDir("src/signv1/iosMain/kotlin/ru/gorevmichael/build_outputs/di")
             }
+            dependencies {}
         }
     }
-
 }
-
-//dependencies {
-//    add("kspCommonMainMetadata", project(":build_processor"))
-//}
-//ksp {
-//    useKsp2 = true
-//    arg("includedFeatures", properties["includedFeatures"] as String)
-//}
