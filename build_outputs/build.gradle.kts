@@ -35,25 +35,14 @@ kotlin {
     iosSimulatorArm64 { binaries.framework { baseName = xcfName } }
 
     sourceSets {
-        androidMain {
-//            kotlin.setSrcDirs(emptyList<String>())
-
+        all {
+            kotlin.setSrcDirs(emptyList<String>())
+            val sourceSetName = this.name
             if (includedFeatures.contains("sign_v2")) {
-                kotlin.srcDir("src/signv2/androidMain/kotlin/ru/gorevmichael/build_outputs/di")
+                kotlin.srcDir("src/signv2/$sourceSetName/kotlin/ru/gorevmichael/build_outputs/di")
             } else {
-                kotlin.srcDir("src/signv1/androidMain/kotlin/ru/gorevmichael/build_outputs/di")
+                kotlin.srcDir("src/signv1/$sourceSetName/kotlin/ru/gorevmichael/build_outputs/di")
             }
-        }
-
-        commonMain {
-//            kotlin.setSrcDirs(emptyList<String>())
-
-            if (includedFeatures.contains("sign_v2")) {
-                kotlin.srcDir("src/signv2/commonMain/kotlin/ru/gorevmichael/build_outputs/di")
-            } else {
-                kotlin.srcDir("src/signv1/commonMain/kotlin/ru/gorevmichael/build_outputs/di")
-            }
-
             dependencies {
                 includedFeatures.forEach { feature ->
                     api(project(":$feature"))
@@ -73,17 +62,6 @@ kotlin {
                 implementation(libs.androidx.core)
                 implementation(libs.androidx.testExt.junit)
             }
-        }
-
-        iosMain {
-//            kotlin.setSrcDirs(emptyList<String>())
-
-            if (includedFeatures.contains("sign_v2")) {
-                kotlin.srcDir("src/signv2/iosMain/kotlin/ru/gorevmichael/build_outputs/di")
-            } else {
-                kotlin.srcDir("src/signv1/iosMain/kotlin/ru/gorevmichael/build_outputs/di")
-            }
-            dependencies {}
         }
     }
 }
