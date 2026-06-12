@@ -67,7 +67,10 @@ kotlin {
                 // Transitively implements all staff from :core
                 // No need to transit it further
                 implementation(project(":core"))
-                // Add KMP dependencies here
+                api(libs.filekit.core)
+                api(libs.filekit.dialogs)
+                api(libs.filekit.dialogs.compose)
+                api(libs.filekit.coil)
             }
         }
 

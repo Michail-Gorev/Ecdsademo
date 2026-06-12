@@ -4,5 +4,15 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict/>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict/>
+	</array>
+    <key>UISupportsDocumentBrowser</key>
+    <false/>
 </dict>
 </plist>

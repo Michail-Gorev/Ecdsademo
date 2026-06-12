@@ -127,6 +127,13 @@ fun CreateCustomSignConfigScreen(
             ) {
                 Text("Сохранить")
             }
+            Button(
+                onClick = { viewModel.exportConfig()  },
+                modifier = Modifier.fillMaxWidth().height(56.dp),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("Выгрузить")
+            }
 
             uiState.error?.let { error ->
                 Text(

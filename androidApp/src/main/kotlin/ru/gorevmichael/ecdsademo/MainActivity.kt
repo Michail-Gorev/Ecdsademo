@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.dialogs.init
 import ru.gorevmichael.files.domain.platformSpeciefic.InternalStorage
 
 class MainActivity : ComponentActivity() {
@@ -13,6 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         InternalStorage.initialize(filesDir.absolutePath)
+        FileKit.init(this)
         setContent {
             App()
         }

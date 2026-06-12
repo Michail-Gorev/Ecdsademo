@@ -1,6 +1,8 @@
 @file:OptIn(KspExperimental::class)
 
+import com.android.build.gradle.internal.packaging.defaultExcludes
 import com.google.devtools.ksp.KspExperimental
+import dev.detekt.gradle.Detekt
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -8,6 +10,7 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.detectLint)
     id("com.google.devtools.ksp") version "2.3.7"
 }
 
@@ -64,5 +67,22 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+    }
+}
+
+detekt {
+    buildUponDefaultConfig = true // preconfigure defaults
+    allRules = false // activate all available (even unstable) rules.
+    config.setFrom("$projectDir/config/detekt.yml") // point to your custom config defining rules to run, overwriting default behavior
+    baseline = file("$projectDir/config/baseline.xml")
+    source.from(files("$projectDir/src"))
+}
+
+tasks.withType<Detekt>().configureEach {
+    reports {
+        html.required.set(true) // observe findings in your browser with structure and code snippets
+//        checkstyle.required.set(true) // checkstyle(xml) like format mainly for integrations like Jenkins
+        sarif.required.set(true) // standardized SARIF format (https://sarifweb.azurewebsites.net/) to support integrations with GitHub Code Scanning
+//        markdown.required.set(true) // simple Markdown format
     }
 }
